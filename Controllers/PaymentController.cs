@@ -24,7 +24,12 @@ public class PaymentController : ControllerBase
             PaymentMethod = paymentRequestDto.PaymentId,
             ConfirmationMethod = "manual",
             Confirm = true,
-            CaptureMethod = "manual"
+            CaptureMethod = "manual",
+            AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+            {
+                Enabled = true,
+                AllowRedirects = "never" // Deshabilitar métodos que requieran redirección
+            }
         };
 
         var paymetIntentService = new PaymentIntentService();
