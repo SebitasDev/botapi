@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "OKLDex5k1XiRavENxwWVE5evXBtIP1T6+UrMxHVYt/c=",
+  "Source": "TelegramBotApi",
+  "BasePath": "_content/TelegramBotApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
