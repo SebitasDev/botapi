@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using TelegramBotApi.Models.DTOs.Request;
 using TelegramBotApi.Models.DTOs.Response;
@@ -17,49 +17,44 @@ public class PaymentController : ControllerBase
         StripeConfiguration.ApiKey = "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"; // Clave secreta
         
         // Crear un PaymentIntent sin redirección
-        var options = new PaymentIntentCreateOptions
+        var chargeOptions = new ChargeCreateOptions()
         {
             Amount = 1000, // Monto en centavos (2000 = $20.00 MXN)
             Currency = "mxn", // Moneda en MXN
-            PaymentMethod = paymentRequestDto.PaymentId,
-            Confirm = true, // Confirmamos el pago inmediatamente
-            AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions()
-            {
-                Enabled = true, // Habilitar métodos de pago automáticos
-                AllowRedirects = "never",  // No permitir redirección
-            }
+            Source = paymentRequestDto.PaymentId,
+            Capture = false
         };
 
-        var service = new PaymentIntentService();
+        var chargeService = new ChargeService();
         try
         {
-            PaymentIntent paymentIntent = await service.CreateAsync(options);
+            Charge charge = await chargeService.CreateAsync(chargeOptions);
 
             
 
             // Verificar si el pago fue exitoso
-            if (paymentIntent.Status == "succeeded")
+            if (charge.Status == "succeeded")
             {
                 response.Status = true;
                 response.PaymentDetail = "Pago procesado con exito";
-                response.PaymentMessage = $"Numero transaccion {paymentIntent.Id}";
-                Console.WriteLine(paymentIntent.Description);
+                response.PaymentMessage = $"Numero transaccion {charge.Id}";
+                Console.WriteLine(charge.Description);
                 return Ok(response);
                 
-            }else if (paymentIntent.Status == "requires_action" || paymentIntent.Status == "requires_source_action")
+            }else if (charge.Status == "requires_action" || charge.Status == "requires_source_action")
             {
                 // Si el pago requiere autenticación adicional, pero no se redirige
                 response.Status = false;
                 response.PaymentDetail = "El pago no pudo ser procesado debido a autenticación adicional requerida.";
-                response.PaymentMessage = $"Numero transaccion {paymentIntent.Id}";
+                response.PaymentMessage = $"Numero transaccion {charge.Id}";
 
-                Console.WriteLine(paymentIntent.Description);
+                Console.WriteLine(charge.Description);
                 return StatusCode(statusCode:200, response);
             }else
             {
                 response.Status = false;
                 response.PaymentDetail = "El pago no pudo ser realizado";
-                response.PaymentMessage = $"Numero transaccion {paymentIntent.Id}";
+                response.PaymentMessage = $"Numero transaccion {charge.Id}";
 
                 return StatusCode(statusCode:200, response);
             }
