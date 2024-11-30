@@ -25,11 +25,7 @@ public class PaymentController : ControllerBase
             ConfirmationMethod = "manual",
             Confirm = true,
             CaptureMethod = "manual",
-            AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
-            {
-                Enabled = true,
-                AllowRedirects = "never" // Deshabilitar métodos que requieran redirección
-            }
+            ReturnUrl = "https://youtube.com"
         };
 
         var paymetIntentService = new PaymentIntentService();
